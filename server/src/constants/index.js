@@ -52,5 +52,4 @@ export const MAX_PAGE_SIZE = 100;
 export const HUBSPOT_PAGE_SIZE = 100;
 export const MAX_RETRY_COUNT = 3;
 
-// HubSpot association type: note → contact
 export const HUBSPOT_NOTE_TO_CONTACT_TYPE_ID = 202;

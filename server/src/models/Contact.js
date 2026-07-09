@@ -43,7 +43,7 @@ const contactSchema = new mongoose.Schema(
     lifecycleStage: String,
     leadStatus: String,
     properties: {
-      type: mongoose.Schema.Types.Mixed, // Store raw properties for flexibility
+      type: mongoose.Schema.Types.Mixed, 
       default: {},
     },
     hubSpotCreatedAt: Date,
@@ -54,12 +54,10 @@ const contactSchema = new mongoose.Schema(
   }
 );
 
-// Compound index for querying contacts by connection
 contactSchema.index({ hubSpotConnectionId: 1, hubSpotContactId: 1 });
-// Compound index for search
+
 contactSchema.index({ hubSpotConnectionId: 1, email: 1 });
 
-// Virtual for full name
 contactSchema.virtual('fullName').get(function() {
   if (this.firstName && this.lastName) {
     return `${this.firstName} ${this.lastName}`;
@@ -67,7 +65,7 @@ contactSchema.virtual('fullName').get(function() {
   return this.firstName || this.lastName || '';
 });
 
-// Virtual for notes count (to be populated)
+
 contactSchema.virtual('notes', {
   ref: 'ContactNote',
   localField: '_id',

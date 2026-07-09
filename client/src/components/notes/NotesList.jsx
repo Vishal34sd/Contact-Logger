@@ -16,7 +16,7 @@ export function NotesList({ contactId }) {
 
   const fetchNotes = useCallback(async (page = 1) => {
     if (!contactId) return;
-    
+
     setIsLoading(true);
     setError(null);
     try {
@@ -36,7 +36,7 @@ export function NotesList({ contactId }) {
   }, [fetchNotes]);
 
   const handleNoteAdded = () => {
-    // Refresh page 1 when new note is added
+
     fetchNotes(1);
   };
 

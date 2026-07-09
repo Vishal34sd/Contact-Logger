@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
     try {
       const response = await authApi.getStatus();
       const { data } = response;
-      
+
       setIsConnected(data.isConnected);
       if (data.isConnected) {
         setPortalId(data.portalId);
@@ -43,7 +43,7 @@ export function AuthProvider({ children }) {
       setLastSync(null);
       toast.success('Disconnected from HubSpot');
     } catch (error) {
-      // Toast is handled in interceptor, but we can add specific handling here if needed
+
     }
   };
 
@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
         isLoading,
         disconnect,
         refreshStatus: fetchStatus,
-        setIsConnected // For manual override after redirect
+        setIsConnected 
       }}
     >
       {children}

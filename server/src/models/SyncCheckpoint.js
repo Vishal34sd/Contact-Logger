@@ -10,11 +10,11 @@ const syncCheckpointSchema = new mongoose.Schema(
     entityType: {
       type: String,
       required: true,
-      enum: ['contact', 'note'], // Extensible for future entities
+      enum: ['contact', 'note'], 
       default: 'contact',
     },
     cursor: {
-      type: String, // The 'after' pagination token from HubSpot
+      type: String, 
       required: true,
     },
     status: {
@@ -32,7 +32,6 @@ const syncCheckpointSchema = new mongoose.Schema(
   }
 );
 
-// Ensures only one checkpoint per entity type per connection
 syncCheckpointSchema.index({ hubSpotConnectionId: 1, entityType: 1 }, { unique: true });
 
 const SyncCheckpoint = mongoose.model('SyncCheckpoint', syncCheckpointSchema);

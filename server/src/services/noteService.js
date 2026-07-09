@@ -18,14 +18,12 @@ class NoteService {
       throw new NotFoundError('Contact');
     }
 
-    // 1. Save locally as pending
     const note = await contactNoteRepository.createNote({
       contactId,
       body,
       syncStatus: NOTE_SYNC_STATUS.PENDING,
     });
 
-    // 2. Try to sync to HubSpot asynchronously (don't block the client response)
     this._syncNoteToHubSpot(note._id, contact.hubSpotContactId, connection._id, body)
       .catch(err => logger.error(`Initial note sync failed`, { noteId: note._id, error: err.message }));
 
@@ -34,10 +32,9 @@ class NoteService {
 
   async _syncNoteToHubSpot(noteId, hubSpotContactId, connectionId, body) {
     try {
-      // Create in HubSpot
+
       const hsNote = await hubspotClient.createNote(connectionId, hubSpotContactId, body);
 
-      // Update local note with HS ID and success status
       await contactNoteRepository.updateNote(noteId, {
         hubSpotNoteId: hsNote.id,
         syncStatus: NOTE_SYNC_STATUS.SYNCED,
@@ -49,15 +46,14 @@ class NoteService {
     } catch (error) {
       logger.error(`Note sync failed for ${noteId}`, { error: error.message });
 
-      // Record failure and increment retry
       await contactNoteRepository.updateNote(noteId, {
         syncStatus: NOTE_SYNC_STATUS.FAILED,
         lastAttempt: new Date(),
         errorMessage: error.message,
         $inc: { retryCount: 1 },
       });
-      
-      throw error; // Let caller catch if awaited
+
+      throw error; 
     }
   }
 
@@ -67,17 +63,13 @@ class NoteService {
       throw new AppError('No active HubSpot connection.', 400);
     }
 
-    // Basic verification contact exists
     const contact = await contactRepository.getContactById(contactId, connection._id);
     if (!contact) throw new NotFoundError('Contact');
 
     return contactNoteRepository.getNotesByContactId(contactId, options);
   }
 
-  /**
-   * Manual retry method that can be triggered via API or scheduled task later.
-   */
-  async retryFailedNotes() {
+    async retryFailedNotes() {
     const connection = await hubspotConnectionRepository.getActiveConnection();
     if (!connection) return { status: 'skipped', message: 'No active connection' };
 
@@ -89,9 +81,9 @@ class NoteService {
 
     for (const note of failedNotes) {
       const contact = await contactRepository.getContactById(note.contactId, connection._id);
-      
+
       if (!contact) {
-        // Contact deleted? Mark note as perm-fail
+
         await contactNoteRepository.updateNote(note._id, { retryCount: MAX_RETRY_COUNT, errorMessage: 'Contact not found' });
         failCount++;
         continue;

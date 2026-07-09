@@ -10,11 +10,11 @@ class SyncLogRepository {
   }
 
   async updateSyncLog(logId, data) {
-    // If completing, set completedAt
+
     if (data.status && data.status !== SYNC_STATUS.IN_PROGRESS && !data.completedAt) {
       data.completedAt = new Date();
     }
-    
+
     return SyncLog.findByIdAndUpdate(logId, data, { new: true });
   }
 

@@ -12,17 +12,15 @@ class AuthController {
   }
 
   async handleCallback(req, res) {
-    // Validate callback query
+
     const { query } = authCallbackSchema.parse({ query: req.query });
 
     await authService.handleCallback(query.code);
 
-    // Redirect to frontend or send success response depending on architecture
-    // Assuming frontend closes popup or redirects based on this response
     if (config.isDevelopment) {
       return res.redirect(`${config.client.url}?auth=success`);
     }
-    
+
     return successResponse(res, 200, 'HubSpot connected successfully');
   }
 
@@ -33,7 +31,7 @@ class AuthController {
 
   async getStatus(req, res) {
     const status = await authService.getConnectionStatus();
-    
+
     let syncInfo = null;
     if (status.isConnected) {
       const connection = await hubspotConnectionRepository.getActiveConnection();

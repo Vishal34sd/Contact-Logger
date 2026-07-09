@@ -18,17 +18,15 @@ export function ContactList() {
     activeContactId, 
     selectContact 
   } = useContacts();
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm, 500);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Fetch when search or page changes
   useEffect(() => {
     fetchContacts({ page: currentPage, search: debouncedSearch, limit: 15 });
   }, [debouncedSearch, currentPage, fetchContacts]);
 
-  // Reset to page 1 when search changes
   useEffect(() => {
     setCurrentPage(1);
   }, [debouncedSearch]);

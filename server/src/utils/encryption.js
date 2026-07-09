@@ -7,11 +7,6 @@ const IV_LENGTH = 16;
 const SALT_LENGTH = 64;
 const TAG_LENGTH = 16;
 
-/**
- * Encrypts a text string using AES-256-GCM.
- * @param {string} text - The text to encrypt.
- * @returns {string|null} - The encrypted text in the format: iv:salt:authTag:encryptedData, or null if text is missing or key is missing.
- */
 export const encrypt = (text) => {
   if (!text) return null;
   if (!config.encryption.key) {
@@ -22,15 +17,14 @@ export const encrypt = (text) => {
   try {
     const iv = crypto.randomBytes(IV_LENGTH);
     const salt = crypto.randomBytes(SALT_LENGTH);
-    
-    // Derive key using pbkdf2
+
     const key = crypto.pbkdf2Sync(config.encryption.key, salt, 100000, 32, 'sha512');
 
     const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
-    
+
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    
+
     const tag = cipher.getAuthTag();
 
     return `${iv.toString('hex')}:${salt.toString('hex')}:${tag.toString('hex')}:${encrypted}`;
@@ -40,16 +34,11 @@ export const encrypt = (text) => {
   }
 };
 
-/**
- * Decrypts an encrypted text string.
- * @param {string} encryptedText - The text to decrypt.
- * @returns {string|null} - The decrypted plain text, or null if missing.
- */
 export const decrypt = (encryptedText) => {
   if (!encryptedText) return null;
-  
+
   if (!encryptedText.includes(':')) {
-    // Treat as plain text (e.g. if encryption was disabled or not applied)
+
     return encryptedText;
   }
 
@@ -65,11 +54,11 @@ export const decrypt = (encryptedText) => {
     }
 
     const [ivHex, saltHex, tagHex, encryptedDataHex] = parts;
-    
+
     const iv = Buffer.from(ivHex, 'hex');
     const salt = Buffer.from(saltHex, 'hex');
     const tag = Buffer.from(tagHex, 'hex');
-    
+
     const key = crypto.pbkdf2Sync(config.encryption.key, salt, 100000, 32, 'sha512');
 
     const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);

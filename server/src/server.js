@@ -12,10 +12,9 @@ let server;
 
 const startServer = async () => {
   try {
-    // 1. Connect to Database
+
     await connectDB();
 
-    // 2. Start Express Server
     server = app.listen(config.port, () => {
       logger.info(`Server running in ${config.nodeEnv} mode on port ${config.port}`);
     });
@@ -38,7 +37,6 @@ process.on('unhandledRejection', (err) => {
   }
 });
 
-// Handle SIGTERM (e.g. from Docker/Heroku)
 process.on('SIGTERM', () => {
   logger.info('👋 SIGTERM RECEIVED. Shutting down gracefully');
   if (server) {

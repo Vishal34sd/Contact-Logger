@@ -35,7 +35,7 @@ class ContactNoteRepository {
       syncStatus: 'failed',
       retryCount: { $lt: maxRetries }
     })
-      .sort({ lastAttempt: 1 }) // Older attempts first
+      .sort({ lastAttempt: 1 }) 
       .limit(limit);
   }
 }

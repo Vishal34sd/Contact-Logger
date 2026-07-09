@@ -14,7 +14,7 @@ class ContactController {
   }
 
   async getContactById(req, res) {
-    // Basic valid mongo id check could go to Zod if needed, simple approach here
+
     const { id } = req.params;
     const contact = await contactService.getContactById(id);
 

@@ -50,7 +50,6 @@ const syncLogSchema = new mongoose.Schema(
   }
 );
 
-// Virtual for duration
 syncLogSchema.virtual('durationMs').get(function() {
   if (this.startedAt && this.completedAt) {
     return this.completedAt.getTime() - this.startedAt.getTime();

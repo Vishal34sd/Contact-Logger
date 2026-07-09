@@ -7,7 +7,7 @@ export function Navbar() {
 
   const renderSyncStatus = () => {
     if (!lastSync) return null;
-    
+
     if (lastSync.status === 'in_progress') {
       return (
         <div className="flex items-center text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
@@ -16,7 +16,7 @@ export function Navbar() {
         </div>
       );
     }
-    
+
     if (lastSync.status === 'completed') {
       return (
         <div className="flex items-center text-sm text-green-700 bg-green-50 px-2 py-1 rounded-full">
@@ -25,7 +25,7 @@ export function Navbar() {
         </div>
       );
     }
-    
+
     return (
       <div className="flex items-center text-sm text-destructive bg-destructive/10 px-2 py-1 rounded-full">
         <AlertCircle className="h-3.5 w-3.5 mr-1.5" />
@@ -42,7 +42,7 @@ export function Navbar() {
             <Activity className="h-6 w-6 text-primary mr-2" />
             <span className="font-semibold text-lg tracking-tight">Contact Logger</span>
           </div>
-          
+
           {isConnected && (
             <div className="flex items-center space-x-4">
               {renderSyncStatus()}

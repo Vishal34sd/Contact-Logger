@@ -13,12 +13,12 @@ const hubSpotConnectionSchema = new mongoose.Schema(
     accessToken: {
       type: String,
       required: true,
-      select: false, // Don't return by default
+      select: false, 
     },
     refreshToken: {
       type: String,
       required: true,
-      select: false, // Don't return by default
+      select: false, 
     },
     expiresAt: {
       type: Date,
@@ -42,7 +42,6 @@ const hubSpotConnectionSchema = new mongoose.Schema(
   }
 );
 
-// Encrypt tokens before saving
 hubSpotConnectionSchema.pre('save', function (next) {
   if (this.isModified('accessToken')) {
     this.accessToken = encrypt(this.accessToken);
@@ -53,7 +52,6 @@ hubSpotConnectionSchema.pre('save', function (next) {
   next();
 });
 
-// Decrypt tokens when needed
 hubSpotConnectionSchema.methods.getDecryptedAccessToken = function () {
   return decrypt(this.accessToken);
 };
@@ -62,7 +60,6 @@ hubSpotConnectionSchema.methods.getDecryptedRefreshToken = function () {
   return decrypt(this.refreshToken);
 };
 
-// Check if token is expired (adding 5 min buffer)
 hubSpotConnectionSchema.methods.isTokenExpired = function () {
   const bufferMs = 5 * 60 * 1000;
   return Date.now() >= (this.expiresAt.getTime() - bufferMs);

@@ -31,7 +31,7 @@ export function ContactDetails() {
   return (
     <div className="flex flex-col h-full overflow-y-auto">
       <div className="p-8">
-        {/* Header section */}
+        {}
         <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6 border-b border-border pb-8">
           <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-2xl font-semibold">
             {getInitials(activeContact.firstName, activeContact.lastName)}
@@ -48,7 +48,7 @@ export function ContactDetails() {
           </div>
         </div>
 
-        {/* Properties Grid */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 py-8">
           <div className="space-y-1">
             <div className="flex items-center text-sm font-medium text-muted-foreground mb-1">
@@ -56,7 +56,7 @@ export function ContactDetails() {
             </div>
             <p className="text-sm text-foreground">{activeContact.email || '—'}</p>
           </div>
-          
+
           <div className="space-y-1">
             <div className="flex items-center text-sm font-medium text-muted-foreground mb-1">
               <Phone className="h-4 w-4 mr-2" /> Phone
@@ -88,7 +88,7 @@ export function ContactDetails() {
           </div>
         </div>
 
-        {/* Notes Section */}
+        {}
         <NotesList contactId={activeContact.id} />
       </div>
     </div>

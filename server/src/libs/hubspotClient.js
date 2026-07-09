@@ -17,20 +17,19 @@ class HubSpotClient {
   }
 
   _setupInterceptors() {
-    // Inject token before every request
+
     this.client.interceptors.request.use(
       async (requestConfig) => {
-        // Only inject token if connectionId is provided in config
+
         if (requestConfig.connectionId) {
           const connection = await hubspotConnectionRepository.getConnectionById(requestConfig.connectionId);
-          
+
           if (!connection) {
             throw new Error('HubSpot connection not found');
           }
 
           let accessToken = connection.getDecryptedAccessToken();
 
-          // Proactive refresh if expired
           if (connection.isTokenExpired()) {
             logger.info(`Proactive token refresh for portal ${connection.hubSpotPortalId}`);
             accessToken = await this.refreshAccessToken(connection);
@@ -43,13 +42,11 @@ class HubSpotClient {
       (error) => Promise.reject(error)
     );
 
-    // Handle 401 Unauthorized (Reactive refresh)
     this.client.interceptors.response.use(
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
 
-        // If 401 and we haven't retried yet
         if (error.response?.status === 401 && !originalRequest._retry && originalRequest.connectionId) {
           originalRequest._retry = true;
           logger.info(`Reactive token refresh triggered by 401`);
@@ -57,8 +54,7 @@ class HubSpotClient {
           try {
             const connection = await hubspotConnectionRepository.getConnectionById(originalRequest.connectionId);
             const newAccessToken = await this.refreshAccessToken(connection);
-            
-            // Retry request with new token
+
             originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
             return this.client(originalRequest);
           } catch (refreshError) {
@@ -82,7 +78,7 @@ class HubSpotClient {
       params.append('refresh_token', refreshToken);
 
       const response = await axios.post(
-        'https://api.hubapi.com/oauth/v1/token', // Standard token endpoint
+        'https://api.hubapi.com/oauth/v1/token', 
         params.toString(),
         {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -95,14 +91,14 @@ class HubSpotClient {
       await hubspotConnectionRepository.updateTokens(
         connection._id,
         access_token,
-        new_refresh_token || refreshToken, // API might not always return a new refresh token
+        new_refresh_token || refreshToken, 
         expiresAt
       );
 
       return access_token;
     } catch (error) {
       logger.error('Token refresh error:', error.response?.data || error.message);
-      // Mark connection as error/expired
+
       await hubspotConnectionRepository.updateConnectionStatus(connection._id, 'expired');
       throw new HubSpotApiError('Failed to refresh access token', 401, error);
     }
@@ -116,11 +112,9 @@ class HubSpotClient {
     const details = error.response?.data || null;
 
     logger.error(`HubSpot API Error [${status}]: ${message}`, { details });
-    
+
     return Promise.reject(new HubSpotApiError(message, status, details));
   }
-
-  // --- API Methods ---
 
   async getContacts(connectionId, limit = 100, after = null, properties = []) {
     const params = { limit, properties: properties.join(',') };
@@ -146,7 +140,7 @@ class HubSpotClient {
           types: [
             {
               associationCategory: 'HUBSPOT_DEFINED',
-              associationTypeId: 202, // Contact to Note association
+              associationTypeId: 202, 
             },
           ],
         },

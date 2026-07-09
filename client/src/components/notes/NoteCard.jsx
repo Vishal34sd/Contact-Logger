@@ -34,13 +34,13 @@ export function NoteCard({ note }) {
       note.syncStatus === 'failed' ? "border-destructive/30 bg-destructive/5" : "border-border bg-card"
     )}>
       <p className="whitespace-pre-wrap text-foreground/90">{note.body}</p>
-      
+
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground pt-2 border-t border-border/50">
         <div className="flex items-center">
           <Clock className="h-3.5 w-3.5 mr-1" />
           {formatDate(note.createdAt)}
         </div>
-        
+
         {getStatusDisplay()}
       </div>
     </div>

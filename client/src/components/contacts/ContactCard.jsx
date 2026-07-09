@@ -14,7 +14,7 @@ export function ContactCard({ contact, isActive, onClick }) {
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-medium">
         {getInitials(contact.firstName, contact.lastName)}
       </div>
-      
+
       <div className="flex-1 space-y-1 overflow-hidden">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium leading-none truncate text-foreground">

@@ -8,7 +8,7 @@ import { Loader2, Send } from 'lucide-react';
 
 export function AddNoteForm({ contactId, onNoteAdded }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const {
     register,
     handleSubmit,
@@ -27,7 +27,7 @@ export function AddNoteForm({ contactId, onNoteAdded }) {
       reset();
       if (onNoteAdded) onNoteAdded();
     } catch (error) {
-      // Interceptor handles the toast, we just reset state
+
     } finally {
       setIsSubmitting(false);
     }

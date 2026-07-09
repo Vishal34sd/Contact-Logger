@@ -6,19 +6,19 @@ const ContactsContext = createContext();
 
 export function ContactsProvider({ children }) {
   const { isConnected } = useAuth();
-  
+
   const [contacts, setContacts] = useState([]);
   const [meta, setMeta] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+
   const [activeContactId, setActiveContactId] = useState(null);
   const [activeContact, setActiveContact] = useState(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
 
   const fetchContacts = useCallback(async (params = { page: 1, limit: 20 }) => {
     if (!isConnected) return;
-    
+
     setIsLoading(true);
     setError(null);
     try {
@@ -34,15 +34,15 @@ export function ContactsProvider({ children }) {
 
   const fetchContactDetails = useCallback(async (id) => {
     if (!id) return;
-    
+
     setIsLoadingDetails(true);
     setActiveContactId(id);
-    
+
     try {
       const response = await contactsApi.getContactById(id);
       setActiveContact(response.data);
     } catch (err) {
-      // If error occurs, we might want to clear active contact or show toast
+
       setActiveContact(null);
     } finally {
       setIsLoadingDetails(false);

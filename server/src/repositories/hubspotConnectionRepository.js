@@ -3,8 +3,7 @@ import { CONNECTION_STATUS } from '../constants/index.js';
 
 class HubSpotConnectionRepository {
   async getActiveConnection() {
-    // Assuming single-tenant setup for this assignment. 
-    // In multi-tenant, you'd pass a userId or tenantId.
+
     return HubSpotConnection.findOne({ status: CONNECTION_STATUS.ACTIVE })
       .select('+accessToken +refreshToken');
   }
@@ -36,7 +35,7 @@ class HubSpotConnectionRepository {
     connection.accessToken = accessToken;
     connection.refreshToken = refreshToken;
     connection.expiresAt = expiresAt;
-    
+
     return connection.save();
   }
 }

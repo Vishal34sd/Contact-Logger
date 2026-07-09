@@ -39,9 +39,8 @@ const contactNoteSchema = new mongoose.Schema(
   }
 );
 
-// Compound index for finding notes to retry
 contactNoteSchema.index({ syncStatus: 1, retryCount: 1 });
-// Compound index for listing notes by contact ordered by date
+
 contactNoteSchema.index({ contactId: 1, createdAt: -1 });
 
 const ContactNote = mongoose.model('ContactNote', contactNoteSchema);

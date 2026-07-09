@@ -11,19 +11,17 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const pollingRef = useRef(null);
 
-  // Redirect if not connected
   useEffect(() => {
     if (!isLoading && !isConnected) {
       navigate('/', { replace: true });
     }
   }, [isConnected, isLoading, navigate]);
 
-  // Poll status while sync is in progress
   useEffect(() => {
     if (lastSync?.status === 'in_progress') {
       pollingRef.current = setInterval(() => {
         refreshStatus();
-      }, 3000); // Poll every 3 seconds
+      }, 3000); 
     } else {
       if (pollingRef.current) {
         clearInterval(pollingRef.current);
@@ -38,21 +36,21 @@ export function DashboardPage() {
   }, [lastSync?.status, refreshStatus]);
 
   if (isLoading || !isConnected) {
-    return null; // Will redirect
+    return null; 
   }
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
       <Navbar />
-      
+
       <main className="flex-1 flex overflow-hidden">
         <ContactsProvider>
-          {/* Sidebar */}
+          {}
           <div className="w-full md:w-[350px] lg:w-[400px] shrink-0 h-full overflow-hidden border-r border-border">
             <ContactList />
           </div>
-          
-          {/* Main Content */}
+
+          {}
           <div className="flex-1 h-full overflow-hidden hidden md:block bg-background">
             <ContactDetails />
           </div>

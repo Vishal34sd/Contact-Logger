@@ -13,12 +13,9 @@ export function LandingPage() {
   useEffect(() => {
     if (isLoading) return;
 
-    // Check if coming back from OAuth redirect successfully
     if (searchParams.get('auth') === 'success') {
       toast.success('Successfully connected to HubSpot!');
-      
-      // If not connected yet, clear the URL and try refreshing status
-      // Otherwise, the navigation to dashboard will naturally clear the URL params
+
       if (!isConnected) {
         setSearchParams({});
         refreshStatus();

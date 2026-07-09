@@ -39,12 +39,11 @@ const sendErrorDev = (err, req, res) => {
 };
 
 const sendErrorProd = (err, req, res) => {
-  // A) Operational, trusted error: send message to client
+
   if (err.isOperational) {
     return errorResponse(res, err.statusCode, err.message, err.errors || null);
   }
-  
-  // B) Programming or other unknown error: don't leak error details
+
   logger.error('ERROR 💥', err);
   return errorResponse(res, 500, 'Something went very wrong!');
 };
@@ -63,7 +62,7 @@ export const errorHandler = (err, req, res, next) => {
     if (error.name === 'CastError') error = handleCastErrorDB(error, res);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error, res);
     if (error.name === 'ValidationError') error = handleValidationErrorDB(error, res);
-    
+
     sendErrorProd(error, req, res);
   }
 };

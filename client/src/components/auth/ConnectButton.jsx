@@ -10,7 +10,7 @@ export function ConnectButton() {
     setIsConnecting(true);
     try {
       const response = await authApi.getAuthUrl();
-      // Redirect to HubSpot OAuth page
+
       window.location.href = response.data.url;
     } catch (error) {
       toast.error('Failed to get authorization URL');
