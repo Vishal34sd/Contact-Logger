@@ -2,6 +2,10 @@
 
 A production-grade, full-stack application that integrates with HubSpot via OAuth to automatically synchronize contacts and manage contact notes. Built with React (Vite) for the frontend and Node.js/Express for the backend.
 
+**Live Demo URLs:**
+- **Frontend**: [https://contact-logger-alpha.vercel.app/](https://contact-logger-alpha.vercel.app/)
+- **Backend API**: [https://contact-logger.onrender.com](https://contact-logger.onrender.com)
+
 ## Features
 
 ### Frontend (Client)
