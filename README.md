@@ -36,10 +36,10 @@ A production-grade, full-stack application that integrates with HubSpot via OAut
 *   **Core**: Node.js (v18+), Express.js
 *   **Database**: MongoDB (`mongoose`)
 *   **HubSpot API**: `axios`
-*   **Security & Middleware**: `cors`, `cookie-parser`, `compression`, `express-rate-limit`, `express-mongo-sanitize`, `jsonwebtoken`
+*   **Security & Middleware**: `cors`, `cookie-parser`, `compression`, `express-rate-limit`, `express-mongo-sanitize`
 *   **Validation**: `zod`
 *   **Logging**: `winston`, `morgan`
-*   **Utilities**: `uuid`, `dotenv`
+*   **Utilities**: `dotenv`
 
 
 ## Getting Started
@@ -76,15 +76,11 @@ cp .env.example .env
 ```
 
 **Required Environment Variables (`server/.env`):**
-*   `PORT`: The port the server runs on (default: `5000`).
-*   `NODE_ENV`: The environment (default: `development`).
-*   `MONGODB_URI`: Your MongoDB connection string (e.g., `mongodb://localhost:27017/contact-logger`).
-*   `JWT_SECRET`: A secure string for JSON Web Token signing.
-*   `JWT_EXPIRES_IN`: Expiration time for JWT (e.g., `7d`).
-*   `CLIENT_URL`: URL of the frontend app (e.g., `http://localhost:5173`).
+*   `PORT`: The port the server runs on (e.g., `5000`).
+*   `MONGODB_URI`: Your MongoDB connection string.
 *   `HUBSPOT_CLIENT_ID`: Your HubSpot Public App Client ID.
-*   `HUBSPOT_CLIENT_SECRET`: Your HubSpot Public App Client Secret.
-*   `HUBSPOT_REDIRECT_URI`: Your HubSpot Redirect URI (e.g., `http://localhost:5000/api/auth/hubspot/callback`).
+*   `HUBSPOT_SECRET`: Your HubSpot Public App Client Secret.
+*   `HUBSPOT_REDIRECT_URL`: Your HubSpot Redirect URI.
 *   `ENCRYPTION_KEY`: A 64-character hex string used to encrypt OAuth tokens at rest. Generate one using: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
 
 ### 3. Running the Application
