@@ -17,13 +17,14 @@ export function LandingPage() {
     if (searchParams.get('auth') === 'success') {
       toast.success('Successfully connected to HubSpot!');
       
-      // Clean up URL without triggering reload
-      setSearchParams({});
-      
-      // Force refresh status since the callback just finished on backend
-      refreshStatus();
+      // If not connected yet, clear the URL and try refreshing status
+      // Otherwise, the navigation to dashboard will naturally clear the URL params
+      if (!isConnected) {
+        setSearchParams({});
+        refreshStatus();
+      }
     }
-  }, [searchParams, isLoading, refreshStatus, setSearchParams]);
+  }, [searchParams, isLoading, isConnected, refreshStatus, setSearchParams]);
 
   useEffect(() => {
     if (!isLoading && isConnected) {

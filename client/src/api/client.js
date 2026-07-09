@@ -2,7 +2,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:5000/api', // Hardcoded for this assignment setup
+  baseURL: '/api', // Proxied by Vite dev server to http://localhost:5000/api
   headers: {
     'Content-Type': 'application/json',
   },
