@@ -12,7 +12,7 @@ The Contact Logger is a full-stack web application designed to integrate securel
 
 *   **Frontend → Backend**: The frontend communicates with the backend exclusively via standard HTTP/JSON requests. All sensitive operations (like OAuth and token management) are abstracted away from the client.
 *   **Backend → Database**: The backend interacts with MongoDB using the Repository pattern. Repositories abstract the Mongoose models, providing a clean API for the service layer to perform CRUD operations.
-*   **Backend → HubSpot**: The backend acts as an API client to HubSpot, using Axios. A dedicated HubSpot client library (`src/libs/hubspotClient.js`) handles injecting authentication tokens, refreshing expired tokens, and structuring API requests.
+*   **Backend → HubSpot**: The backend acts as an API client to HubSpot, using Axios. A dedicated HubSpot client library handles injecting authentication tokens, refreshing expired tokens, and structuring API requests.
 
 ## Architecture Diagram
 
@@ -44,12 +44,3 @@ flowchart TD
     Repositories -- Mongoose --> DB
     HubSpot_Client -- HTTPS / OAuth --> HubSpot
 ```
-
-## OAuth and Synchronization Workflow
-
-When a user initiates the connection:
-1.  The backend redirects the user to the HubSpot Authorization page.
-2.  Upon approval, HubSpot redirects back to the backend with an Authorization Code.
-3.  The backend exchanges this code for Access and Refresh tokens.
-4.  The tokens are encrypted and stored in the database.
-5.  An asynchronous, background synchronization process is instantly kicked off by the backend to fetch all contacts from HubSpot without blocking the HTTP response to the frontend.

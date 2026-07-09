@@ -11,16 +11,12 @@ Stores OAuth connection details per user (or tenant).
 ### 2. `Contact`
 Stores synchronized contact records from HubSpot.
 *   **Fields**: `hubspotId` (String, unique), `firstName`, `lastName`, `email`, `lastModifiedAt` (from HubSpot), `createdAt`, `updatedAt`.
-*   **Indexes**: 
-    *   `{ hubspotId: 1 }` (Unique, for fast upsert operations).
-    *   `{ email: 1 }` (For searching).
+*   **Indexes**: `{ hubspotId: 1 }` (Unique), `{ email: 1 }`.
 
 ### 3. `ContactNote`
 Stores notes created locally and their synchronization status.
 *   **Fields**: `contactId` (Ref to Contact), `content`, `syncStatus` (Enum: `pending`, `synced`, `failed`, `perm_failed`), `hubspotEngagementId`, `retryCount`, `lastError`.
-*   **Indexes**:
-    *   `{ syncStatus: 1, retryCount: 1 }` (For querying failed notes for retries).
-    *   `{ contactId: 1, createdAt: -1 }` (For efficiently retrieving a contact's notes timeline).
+*   **Indexes**: `{ syncStatus: 1, retryCount: 1 }`, `{ contactId: 1, createdAt: -1 }`.
 
 ### 4. `SyncCheckpoint`
 Stores pagination cursors for resumable synchronization.

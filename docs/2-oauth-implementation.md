@@ -26,9 +26,8 @@ Access tokens expire (usually after 30 minutes). The system handles this proacti
 
 *   **No Tokens on Client**: The frontend never receives HubSpot tokens. All interactions with HubSpot are securely proxied through the backend.
 *   **Encryption at Rest**: Stolen database dumps will not compromise HubSpot accounts due to the AES-256 encryption.
-*   **State Parameter (Omitted for Simplicity)**: In a stricter production environment, a `state` parameter (CSRF token) should be passed during the OAuth initiation and verified on callback to prevent Cross-Site Request Forgery.
 
-## OAuth Sequence Diagram
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -45,7 +44,7 @@ sequenceDiagram
     HubSpot-->>User: Prompts for Consent
     User->>HubSpot: Grants Access
     HubSpot->>Backend: Redirect to /callback?code=XYZ
-    Backend->>HubSpot: POST /oauth/tokens (Exchange code for tokens)
+    Backend->>HubSpot: POST /oauth/tokens
     HubSpot-->>Backend: Returns Access & Refresh Tokens
     Backend->>Backend: Encrypts Tokens (AES-256)
     Backend->>DB: Saves encrypted connection

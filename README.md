@@ -1,28 +1,28 @@
 # Contact Logger
 
-A production-grade, full-stack application that integrates with HubSpot via OAuth to automatically synchronize contacts and manage contact notes. Built with React (Vite) for the frontend and Node.js/Express for the backend.
-
 **Live Demo URLs:**
 - **Frontend**: [https://contact-logger-alpha.vercel.app/](https://contact-logger-alpha.vercel.app/)
 - **Backend API**: [https://contact-logger.onrender.com](https://contact-logger.onrender.com)
 
-## Features
+## Project overview
 
-### Frontend (Client)
-*   **Modern UI**: Built with React 19 and Tailwind CSS for a responsive, clean interface.
-*   **Form Management & Validation**: Uses React Hook Form with Zod for robust client-side validation.
-*   **Routing**: React Router DOM for seamless single-page navigation.
-*   **API Communication**: Axios with central interceptors for error handling and toast notifications.
-*   **Icons & Notifications**: Lucide React for iconography and React Toastify for user feedback.
+A production-grade, full-stack application that integrates with HubSpot via OAuth to automatically synchronize contacts and manage contact notes. Built with React (Vite) for the frontend and Node.js/Express for the backend. The application provides a responsive UI to view paginated contacts, add notes locally, and syncs data to and from HubSpot in the background.
 
-### Backend (Server)
-*   **HubSpot OAuth 2.0**: Implements the latest `2026-03` token endpoints.
-*   **Automatic Resumable Sync**: Fetches contacts securely with pagination and checkpointing. If the sync crashes, it resumes from the last cursor.
-*   **Contact Notes**: Create notes locally and sync them to HubSpot asynchronously. Includes a retry mechanism for failed syncs.
-*   **Clean Architecture**: Separation of concerns across Controllers, Services, Repositories, and Models.
-*   **Production Ready**: Includes centralized error handling, Zod validation, rate limiting, Winston structured logging, NoSQL injection prevention, and token encryption.
+## Architecture
 
-## Tech Stack & Libraries Used
+The system utilizes a clean 3-tier architecture:
+1. **Frontend**: A React/Vite Single Page Application (SPA) providing a modern user interface.
+2. **Backend**: A Node.js/Express REST API that acts as an intermediary, orchestrating the OAuth flow and background syncs. It uses a Domain-Driven Layered Architecture (Controllers, Services, Repositories, Models).
+3. **Database**: MongoDB handles persistent storage of synced contacts, notes, and encrypted OAuth tokens.
+
+**Architecture Highlights:**
+* **Repository Pattern**: Mongoose models are wrapped in repository classes (`src/repositories`) to abstract database queries from business logic.
+* **HubSpot Client**: `src/libs/hubspotClient.js` utilizes Axios interceptors to automatically decrypt and inject the Access Token, intercepting `401 Unauthorized` errors to proactively refresh the token.
+* **Idempotent Sync**: `src/services/syncService.js` uses `SyncCheckpoint` to store HubSpot's pagination cursors. If a sync fails midway, it picks up exactly where it left off on the next run.
+
+*For detailed architectural documentation, please see the [docs/](docs/README.md) folder.*
+
+## Technology choices
 
 ### Frontend (Client)
 *   **Core**: React 19, Vite
@@ -41,8 +41,7 @@ A production-grade, full-stack application that integrates with HubSpot via OAut
 *   **Logging**: `winston`, `morgan`
 *   **Utilities**: `dotenv`
 
-
-## Getting Started
+## Setup instructions
 
 ### Prerequisites
 
@@ -50,7 +49,7 @@ A production-grade, full-stack application that integrates with HubSpot via OAut
 *   MongoDB Instance
 *   HubSpot Developer Account & Public App
 
-### 1. Installation
+### Installation
 
 Install dependencies for both the client and server:
 
@@ -64,16 +63,9 @@ cd ../client
 npm install
 ```
 
-### 2. Configuration & Environment Variables
+## Environment variables
 
-The frontend relies on Vite's proxy to communicate with the backend, so it does not require a `.env` file by default (it proxies `/api` to `http://localhost:5000`).
-
-For the backend, copy the example environment file and configure it:
-
-```bash
-cd server
-cp .env.example .env
-```
+For the backend, create a `.env` file in the `server` directory.
 
 **Required Environment Variables (`server/.env`):**
 *   `PORT`: The port the server runs on (e.g., `5000`).
@@ -83,14 +75,16 @@ cp .env.example .env
 *   `HUBSPOT_REDIRECT_URL`: Your HubSpot Redirect URI.
 *   `ENCRYPTION_KEY`: A 64-character hex string used to encrypt OAuth tokens at rest. Generate one using: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
 
-### 3. Running the Application
+*Note: The frontend does not require a `.env` for local development as it uses Vite's proxy, but in production, Vite uses `VITE_API_URL` to point to the hosted backend.*
 
-You need to run both the frontend and backend servers.
+## Local development instructions
+
+You need to run both the frontend and backend servers simultaneously.
 
 **Run the Backend:**
 ```bash
 cd server
-npm run dev # or npm start for production
+npm run dev
 ```
 
 **Run the Frontend:**
@@ -99,28 +93,45 @@ cd client
 npm run dev
 ```
 
-The frontend will be available at `http://localhost:5173` and the backend API at `http://localhost:5000/api`.
+The frontend will be available at `http://localhost:5173` and the backend API at `http://localhost:5000`.
 
-## API Documentation
+## Deployment instructions
 
-### Auth Endpoints
-*   `GET /api/auth/hubspot`: Returns the HubSpot Authorization URL.
-*   `GET /api/auth/hubspot/callback`: Handles the OAuth redirect, exchanges code for tokens, and **triggers the automatic background sync**.
-*   `GET /api/auth/hubspot/status`: Returns current connection status and last sync metrics.
-*   `POST /api/auth/hubspot/disconnect`: Disconnects the active HubSpot integration.
+### Backend Deployment (Render/Heroku)
+1. Deploy the `server` directory as a Node web service.
+2. Ensure the Build Command is `npm install` and the Start Command is `npm start`.
+3. Populate all Environment Variables (including the MongoDB connection string) in the host's dashboard.
 
-### Contact Endpoints
-*   `GET /api/contacts`: Retrieves a paginated list of synchronized contacts.
-    *   Query params: `page`, `limit`, `search`, `sort`
-*   `GET /api/contacts/:id`: Retrieves a single contact by local MongoDB ID.
+### Frontend Deployment (Vercel/Netlify)
+1. Deploy the `client` directory.
+2. Set the Build Command to `npm run build` and Output Directory to `dist`.
+3. Add the `VITE_API_URL` environment variable pointing to the deployed backend.
+4. *Important*: Vercel requires the `vercel.json` file (included in the `client/` folder) to properly route SPA traffic to `index.html` and prevent 404 errors on refresh.
 
-### Note Endpoints
-*   `GET /api/contacts/:id/notes`: Retrieves paginated notes for a contact.
-*   `POST /api/contacts/:id/notes`: Creates a note locally and initiates a sync to HubSpot.
-*   `POST /api/notes/retry-failed`: Manually triggers a retry for notes that failed to sync to HubSpot.
+## Features implemented
 
-## Architecture Highlights
+*   **HubSpot OAuth 2.0**: Secure authentication using the latest `2026-03` token endpoints.
+*   **Automatic Resumable Sync**: Asynchronous fetching of contacts with pagination and cursor-based checkpointing.
+*   **Local-First Contact Notes**: Notes are created instantly in the local UI and synced to HubSpot in the background.
+*   **Retry Mechanism**: Notes that fail to sync (e.g., due to network issues) are queued and can be retried.
+*   **Modern SPA UI**: Clean, responsive frontend with form validation, error handling, and toast notifications.
+*   **Security Best Practices**: Includes centralized Express error handling, Zod validation, rate limiting, Winston structured logging, NoSQL injection prevention, and AES-256 token encryption at rest.
 
-1.  **Repository Pattern**: Mongoose models are wrapped in repository classes (`src/repositories`) to abstract database queries from business logic.
-2.  **HubSpot Client**: `src/libs/hubspotClient.js` utilizes Axios interceptors to automatically decrypt and inject the Access Token. It also intercepts `401 Unauthorized` errors to proactively refresh the token and retry the failed request transparently.
-3.  **Idempotent Sync**: `src/services/syncService.js` uses `SyncCheckpoint` to store HubSpot's pagination cursors. If a sync fails midway, it will pick up exactly where it left off on the next run.
+## Assumptions
+
+*   **Single Tenant Architecture**: The current schema and background sync loops assume a single organizational tenant using the application.
+*   **Source of Truth**: HubSpot is treated as the primary source of truth for contact data. On synchronization, local contact modifications are overwritten by HubSpot's data.
+*   **Availability**: It is assumed the local MongoDB database is highly available.
+
+## Limitations
+
+*   **In-Memory Background Processing**: Currently, heavy tasks (like initial contact syncing) run asynchronously in the Node event loop. If the server crashes during a sync, the running task is lost (though gracefully recoverable on next boot due to Checkpointing).
+*   **Polling-Based Sync**: The system relies on polling (fetching pages of data) rather than real-time webhooks, meaning data might not be instantly synchronized if a contact is updated directly in HubSpot.
+*   **Unidirectional Sync**: Contacts sync *from* HubSpot *to* the local database. Only notes sync *to* HubSpot. True bidirectional conflict resolution for contacts is not implemented.
+
+## Future improvements
+
+*   **Message Broker Integration**: Implement BullMQ and Redis to handle background synchronization jobs and note retries instead of relying on the Node event loop. The `SyncService` is already architecturally decoupled to support this smoothly.
+*   **HubSpot Webhooks**: Replace full polling syncs with real-time webhook subscriptions for immediate local updates when a HubSpot contact is modified.
+*   **Bi-directional Conflict Resolution**: Implement a Last-Write-Wins (LWW) strategy using timestamps to allow contacts to be safely edited locally and pushed back to HubSpot.
+*   **Multi-tenant Support**: Expand the `HubSpotConnection` and `Contact` schemas to support a `tenantId`, isolating data for a multi-user SaaS platform.
