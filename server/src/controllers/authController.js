@@ -17,11 +17,7 @@ class AuthController {
 
     await authService.handleCallback(query.code);
 
-    if (config.isDevelopment) {
-      return res.redirect(`${config.client.url}?auth=success`);
-    }
-
-    return successResponse(res, 200, 'HubSpot connected successfully');
+    return res.redirect(`${config.client.url}/dashboard`);
   }
 
   async disconnect(req, res) {
