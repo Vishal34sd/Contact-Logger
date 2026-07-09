@@ -9,7 +9,7 @@ const envSchema = z.object({
   MONGODB_URI: z.string().min(1, 'MONGODB_URI is required'),
   JWT_SECRET: z.string().default('dev-jwt-secret-change-in-production'),
   JWT_EXPIRES_IN: z.string().default('7d'),
-  CLIENT_URL: z.string().default('http://localhost:5173'),
+  CLIENT_URL: z.string().default('https://contact-logger-alpha.vercel.app'),
   HUBSPOT_CLIENT_ID: z.string().min(1, 'HUBSPOT_CLIENT_ID is required'),
   HUBSPOT_SECRET: z.string().min(1, 'HUBSPOT_SECRET is required'),
   HUBSPOT_REDIRECT_URL: z.string().min(1, 'HUBSPOT_REDIRECT_URL is required'),

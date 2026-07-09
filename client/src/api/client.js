@@ -2,7 +2,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const apiClient = axios.create({
-  baseURL: '/api', 
+  baseURL: import.meta.env.VITE_API_URL || 'https://contact-logger.onrender.com/api', 
   headers: {
     'Content-Type': 'application/json',
   },

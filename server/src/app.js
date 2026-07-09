@@ -14,7 +14,7 @@ import routes from './routes/index.js';
 const app = express();
 
 app.use((req, res, next) => {
-  const origin = req.headers.origin || 'http://localhost:5173';
+  const origin = req.headers.origin || config.client.url;
   res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
